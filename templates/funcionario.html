@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Funcionários | Sistema de Gestão</title>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #f5f7fb;
+            --text: #172033;
+            --muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(ellipse at top left, #e4edff 0, transparent 38%),
+                var(--background);
+        }
+
+        /* CABEÇALHO */
+
+        header {
+            padding: 28px clamp(20px, 5vw, 60px);
+            color: white;
+            background: linear-gradient(120deg, #111c35, #1e3a65 60%, #2563eb);
+            box-shadow: 0 12px 35px rgba(15, 35, 70, 0.12);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .header-text p {
+            color: #cbd8ee;
+            font-size: 0.78rem;
+            margin-bottom: 5px;
+            letter-spacing: 1.3px;
+            text-transform: uppercase;
+        }
+
+        header h1 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            letter-spacing: -0.8px;
+        }
+
+        .header-content > a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 18px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: 0.25s ease;
+        }
+
+        .header-content > a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+
+        .container {
+            width: min(1200px, calc(100% - 40px));
+            margin: 40px auto 60px;
+        }
+
+        .page-intro {
+            margin-bottom: 25px;
+            animation: aparecer 0.6s ease both;
+        }
+
+        .page-intro h2 {
+            margin-bottom: 8px;
+            font-size: clamp(1.5rem, 3vw, 1.9rem);
+            letter-spacing: -0.7px;
+        }
+
+        .page-intro p {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* CARDS */
+
+        .card {
+            position: relative;
+            padding: 30px;
+            margin-bottom: 26px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 22px;
+            box-shadow: 0 8px 30px rgba(26, 45, 80, 0.045);
+            animation: aparecer 0.65s ease both;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: #d3e0fa;
+            box-shadow: 0 14px 38px rgba(26, 45, 80, 0.075);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #818cf8);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding-bottom: 22px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #edf1f7;
+        }
+
+        .card-icon {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            color: var(--primary);
+            font-size: 1.5rem;
+            background: linear-gradient(145deg, #edf3ff, #e0eaff);
+            border: 1px solid #dbe7ff;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: translateY(-3px) rotate(-3deg);
+        }
+
+        .card-header h2 {
+            font-size: 1.2rem;
+            letter-spacing: -0.3px;
+        }
+
+        .card-header p {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        /* FORMULÁRIO HORIZONTAL */
+
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-box {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .input-box label {
+            margin-bottom: 9px;
+            color: #344256;
+            font-size: 0.9rem;
+            font-weight: 650;
+        }
+
+        .input-box input,
+        .input-box select {
+            width: 100%;
+            height: 49px;
+            padding: 0 14px;
+            color: var(--text);
+            font-size: 0.94rem;
+            background: #fbfcfe;
+            border: 1px solid #dbe2ec;
+            border-radius: 11px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        .input-box input::placeholder {
+            color: #9aa6b7;
+        }
+
+        .input-box input:focus,
+        .input-box select:focus {
+            background: #fff;
+            border-color: #7da5ff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        /* BOTÕES */
+
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-height: 49px;
+            padding: 0 22px;
+            border-radius: 12px;
+            font-size: 0.92rem;
+            font-weight: 650;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .btn-primary {
+            color: white;
+            background: linear-gradient(135deg, #3478f6, #2458d9);
+            border: 1px solid transparent;
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.17);
+        }
+
+        .btn-primary::after {
+            content: "→";
+            font-size: 1.15rem;
+            transition: transform 0.25s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-primary:hover::after {
+            transform: translateX(4px);
+        }
+
+        .btn-secondary {
+            color: #475569;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        /* TABELA */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #e7ebf2;
+            border-radius: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        thead {
+            background: #f3f6fc;
+        }
+
+        th {
+            padding: 16px 18px;
+            color: #475569;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        td {
+            padding: 16px 18px;
+            color: #475569;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #edf1f7;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8faff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .funcionario-nome {
+            color: #1e293b;
+            font-weight: 650;
+        }
+
+        .salario {
+            color: #166534;
+            font-weight: 650;
+        }
+
+        .empresa-tag {
+            display: inline-block;
+            padding: 6px 10px;
+            color: #1d4ed8;
+            background: #eff6ff;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 11px;
+            border-radius: 9px;
+            font-size: 0.82rem;
+            font-weight: 650;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .btn-edit {
+            color: #1d4ed8;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+        }
+
+        .btn-edit:hover {
+            background: #dbeafe;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            color: #dc2626;
+            background: #fef2f2;
+            border: 1px solid #fee2e2;
+        }
+
+        .btn-delete:hover {
+            background: #fee2e2;
+            transform: translateY(-2px);
+        }
+
+        .acoes {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .empty-state {
+            padding: 35px 15px;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        .empty-state span {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+        }
+
+        /* RODAPÉ */
+
+        footer {
+            padding: 25px 20px;
+            color: #77849a;
+            background: rgba(255, 255, 255, 0.7);
+            border-top: 1px solid #e7ebf2;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        /* ANIMAÇÕES */
+
+        @keyframes aparecer {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* RESPONSIVIDADE */
+
+        @media (max-width: 700px) {
+            .header-content {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .header-content > a {
+                width: 100%;
+            }
+
+            .container {
+                width: calc(100% - 28px);
+                margin-top: 28px;
+            }
+
+            .card {
+                padding: 23px 18px;
+                border-radius: 18px;
+            }
+
+            .form-group {
+                grid-template-columns: 1fr;
+                gap: 17px;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+            }
+
+            .card-header {
+                align-items: flex-start;
+            }
+
+            .acoes {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="header-text">
+                <h1>Módulo de Funcionários</h1>
+            </div>
+
+            <a href="/sistema">← Voltar ao Menu</a>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="page-intro">
+            <h2>Gerenciamento de funcionários</h2>
+            <p>Cadastre, consulte, edite e gerencie os funcionários da empresa.</p>
+        </section>
+
+        <!-- FORMULÁRIO DE CADASTRO E EDIÇÃO -->
+
+        <section class="card">
+
+            <div class="card-header">
+
+
+                <div>
+                    <h2 id="form-title">Cadastrar Funcionário</h2>
+                    <p>Informe os dados do funcionário nos campos abaixo.</p>
+                </div>
+            </div>
+
+            <form id="form-funcionario">
+                <input type="hidden" id="funcionario-id">
+
+                <div class="form-group">
+
+                    <div class="input-box">
+                        <label for="nome">Nome Completo *</label>
+                        <input
+                            type="text"
+                            id="nome"
+                            required
+                            placeholder="Ex.: Maria Eduarda"
+                        >
+                    </div>
+
+                    <div class="input-box">
+                        <label for="cargo">Cargo *</label>
+                        <input
+                            type="text"
+                            id="cargo"
+                            required
+                            placeholder="Ex.: Analista de Sistemas"
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <div class="input-box">
+                        <label for="salario">Salário (R$) *</label>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            id="salario"
+                            required
+                            placeholder="Ex.: 2500.00"
+                        >
+                    </div>
+
+                    <div class="input-box">
+                        <label for="id_empresa">Empresa *</label>
+                        <select id="id_empresa" required>
+                            <option value="">Selecione uma empresa...</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="btn-container">
+
+                    <button
+                        type="button"
+                        class="btn-secondary"
+                        id="btn-cancelar"
+                        onclick="limparFormulario()"
+                        style="display: none;"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn-primary"
+                        id="btn-salvar"
+                    >
+                        Salvar Funcionário
+                    </button>
+
+                </div>
+            </form>
+
+        </section>
+
+        <!-- LISTAGEM DE FUNCIONÁRIOS -->
+
+        <section class="card">
+
+            <div class="card-header">
+            
+
+                <div>
+                    <h2>Funcionários Cadastrados</h2>
+                    <p>Consulte os registros e gerencie os funcionários cadastrados.</p>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Cargo</th>
+                            <th>Salário</th>
+                            <th>Empresa</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tabela-funcionario">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                
+                                Carregando funcionários...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        © 2026 Sistema de Gestão Corporativa — Todos os direitos reservados.
+    </footer>
+
+    <script>
+        const API_funcionario = '/api/funcionario';
+        const API_empresa = '/api/empresa';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await carregarempresaNoSelect();
+            await carregarfuncionario();
+
+            document.getElementById('form-funcionario')
+                .addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await salvarFuncionario();
+                });
+        });
+
+        // CARREGAR EMPRESAS NO SELECT
+
+        async function carregarempresaNoSelect() {
+            const select = document.getElementById('id_empresa');
+
+            try {
+                const response = await fetch(API_empresa);
+
+                if (!response.ok) {
+                    throw new Error('Não foi possível carregar as empresas.');
+                }
+
+                const empresas = await response.json();
+
+                select.innerHTML =
+                    '<option value="">Selecione uma empresa...</option>';
+
+                empresas.forEach(empresa => {
+                    const option = document.createElement('option');
+
+                    option.value = empresa.id;
+                    option.textContent =
+                        empresa.nome + (empresa.ativo ? '' : ' (Inativa)');
+
+                    select.appendChild(option);
+                });
+
+            } catch (erro) {
+                console.error('Erro ao carregar empresas:', erro);
+                select.innerHTML =
+                    '<option value="">Erro ao carregar empresas</option>';
+            }
+        }
+
+        // LISTAR FUNCIONÁRIOS
+
+        async function carregarfuncionario() {
+            const tbody = document.getElementById('tabela-funcionario');
+
+            try {
+                const response = await fetch(API_funcionario);
+
+                if (!response.ok) {
+                    throw new Error('Não foi possível carregar os funcionários.');
+                }
+
+                const funcionarios = await response.json();
+
+                tbody.innerHTML = '';
+
+                if (!funcionarios.length) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <span>👥</span>
+                                Nenhum funcionário cadastrado.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                funcionarios.forEach(func => {
+                    const salarioFormatado = Number(func.salario).toLocaleString(
+                        'pt-BR',
+                        {
+                            style: 'currency',
+                            currency: 'BRL'
+                        }
+                    );
+
+                    const tr = document.createElement('tr');
+
+                    tr.innerHTML = `
+                        <td>${func.id}</td>
+                        <td class="funcionario-nome">${escaparHTML(func.nome)}</td>
+                        <td>${escaparHTML(func.cargo)}</td>
+                        <td class="salario">${salarioFormatado}</td>
+                        <td>
+                            <span class="empresa-tag">
+                                ${escaparHTML(func.empresa_nome || 'Não informada')}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="acoes">
+                                <button
+                                    type="button"
+                                    class="action-btn btn-edit"
+                                    onclick="prepararEdicao(${Number(func.id)})"
+                                >
+                                    ✎ Editar
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn btn-delete"
+                                    onclick="deletarFuncionario(${Number(func.id)})"
+                                >
+                                    ✕ Excluir
+                                </button>
+                            </div>
+                        </td>
+                    `;
+
+                    tbody.appendChild(tr);
+                });
+
+            } catch (erro) {
+                console.error('Erro ao carregar funcionários:', erro);
+
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <span></span>
+                            Não foi possível carregar os funcionários.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // ESCAPAR TEXTO EXIBIDO NA TABELA
+
+        function escaparHTML(valor) {
+            return String(valor ?? '').replace(/[&<>"']/g, caractere => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[caractere]);
+        }
+
+        // PREPARAR EDIÇÃO
+
+        async function prepararEdicao(id) {
+            try {
+                await carregarempresaNoSelect();
+
+                const response = await fetch(`${API_funcionario}/${id}`);
+
+                if (!response.ok) {
+                    throw new Error('Funcionário não encontrado.');
+                }
+
+                const func = await response.json();
+
+                document.getElementById('funcionario-id').value = func.id;
+                document.getElementById('nome').value = func.nome;
+                document.getElementById('cargo').value = func.cargo;
+                document.getElementById('salario').value = func.salario;
+                document.getElementById('id_empresa').value =
+                    String(func.id_empresa);
+
+                document.getElementById('form-title').textContent =
+                    'Editar Funcionário';
+
+                document.getElementById('btn-salvar').innerHTML =
+                    'Atualizar Funcionário <span>→</span>';
+
+                document.getElementById('btn-cancelar').style.display =
+                    'inline-flex';
+
+                document.getElementById('form-funcionario').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+            } catch (erro) {
+                console.error('Erro ao buscar funcionário:', erro);
+                alert('Erro ao buscar os dados do funcionário.');
+            }
+        }
+
+        // CADASTRAR OU ATUALIZAR FUNCIONÁRIO
+
+        async function salvarFuncionario() {
+            const id = document.getElementById('funcionario-id').value;
+            const nome = document.getElementById('nome').value.trim();
+            const cargo = document.getElementById('cargo').value.trim();
+            const salario = parseFloat(
+                document.getElementById('salario').value
+            );
+            const id_empresa = parseInt(
+                document.getElementById('id_empresa').value,
+                10
+            );
+
+            if (!nome || !cargo || !Number.isFinite(salario) || !id_empresa) {
+                alert('Preencha corretamente todos os campos obrigatórios.');
+                return;
+            }
+
+            const dados = {
+                nome,
+                cargo,
+                salario,
+                id_empresa
+            };
+
+            const metodo = id ? 'PUT' : 'POST';
+            const url = id
+                ? `${API_funcionario}/${id}`
+                : API_funcionario;
+
+            const botao = document.getElementById('btn-salvar');
+
+            botao.disabled = true;
+
+            try {
+                const response = await fetch(url, {
+                    method: metodo,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await response.json();
+
+                if (!response.ok) {
+                    alert(resultado.erro || 'Erro ao salvar funcionário.');
+                    return;
+                }
+
+                alert(resultado.mensagem || 'Operação realizada com sucesso.');
+
+                limparFormulario();
+                await carregarfuncionario();
+
+            } catch (erro) {
+                console.error('Erro ao salvar funcionário:', erro);
+                alert('Falha na comunicação com o servidor.');
+
+            } finally {
+                botao.disabled = false;
+            }
+        }
+
+        // EXCLUIR FUNCIONÁRIO
+
+        async function deletarFuncionario(id) {
+            if (!confirm(
+                `Tem certeza de que deseja excluir o funcionário ID ${id}?`
+            )) {
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `${API_funcionario}/${id}`,
+                    {
+                        method: 'DELETE'
+                    }
+                );
+
+                const resultado = await response.json();
+
+                if (response.ok) {
+                    alert(resultado.mensagem || 'Funcionário excluído.');
+
+                    if (
+                        document.getElementById('funcionario-id').value ===
+                        String(id)
+                    ) {
+                        limparFormulario();
+                    }
+
+                    await carregarfuncionario();
+
+                } else {
+                    alert(resultado.erro || 'Erro ao excluir funcionário.');
+                }
+
+            } catch (erro) {
+                console.error('Erro ao excluir funcionário:', erro);
+                alert('Falha na comunicação com o servidor.');
+            }
+        }
+
+        function limparFormulario() {
+            document.getElementById('funcionario-id').value = '';
+
+            document.getElementById('form-funcionario').reset();
+
+            document.getElementById('form-title').textContent =
+                'Cadastrar Funcionário';
+
+            document.getElementById('btn-salvar').innerHTML =
+                'Salvar Funcionário <span>→</span>';
+
+            document.getElementById('btn-cancelar').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>

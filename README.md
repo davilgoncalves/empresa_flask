@@ -1,2 +1,2 @@
 # empresa_flask
-Empresa e funcionáros
+Cadastro de empresa e funcionários 
